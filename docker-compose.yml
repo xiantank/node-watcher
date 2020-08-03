@@ -1,0 +1,74 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ~/data/redis:/data
+  db:
+    image: mysql:5.7
+    container_name: mysql-5.7
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    command: ['--character-set-server=utf8']
+  node-crawlers-web:
+    build: .
+    image: node-crawlers
+    depends_on:
+      - db
+      - redis
+    environment:
+      NODE_ENV: docker-compose
+    env_file:
+      - .env.docker-compose
+    volumes:
+      - ./error.log:/usr/src/app/error.log
+    ports:
+      - 3000:3000
+    entrypoint: ["npm", "run", "web"]
+  node-crawlers-cron:
+    image: node-crawlers
+    depends_on:
+      - db
+      - redis
+    environment:
+      NODE_ENV: docker-compose
+    env_file:
+      - .env.docker-compose
+    volumes:
+      - ./error.log:/usr/src/app/error.log
+    entrypoint: ["npm", "run", "cron"]
+  node-crawlers-crawler:
+    image: node-crawlers
+    depends_on:
+      - redis
+      - node-crawlers-cron
+    environment:
+      NODE_ENV: docker-compose
+    env_file:
+      - .env.docker-compose
+    volumes:
+      - ./error.log:/usr/src/app/error.log
+    entrypoint: ["npm", "run", "crawler"]
+  node-crawlers-notification:
+    image: node-crawlers
+    depends_on:
+      - db
+      - redis
+      - node-crawlers-cron
+    environment:
+      NODE_ENV: docker-compose
+    env_file:
+      - .env.docker-compose
+    volumes:
+      - ./error.log:/usr/src/app/error.log
+    entrypoint: ["npm", "run", "notification"]

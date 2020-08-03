@@ -1,0 +1,52 @@
+{
+  "name": "node-watcher",
+  "version": "0.0.2",
+  "description": "watch specify page.css and send notifications",
+  "main": "bin/app.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bcrypt": "^5.0.0",
+    "bull": "^3.16.0",
+    "connect-redis": "^5.0.0",
+    "cookie-parser": "^1.4.5",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.6.1",
+    "http-errors": "^1.8.0",
+    "ioredis": "^4.17.3",
+    "jsdom": "^16.3.0",
+    "moment-timezone": "^0.5.31",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.1.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.3.4",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.6.0"
+  },
+  "scripts": {
+    "web": "node bin/app.js",
+    "crawler": "node bin/crawler-worker",
+    "cron": "node bin/cronjob.js",
+    "notification": "node bin/notification-worker.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiantank/node-watcher.git"
+  },
+  "keywords": [
+    "crawler",
+    "notification"
+  ],
+  "author": "xiantank",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xiantank/node-watcher/issues"
+  },
+  "homepage": "https://github.com/xiantank/node-watcher#readme"
+}
