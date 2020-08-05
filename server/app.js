@@ -20,7 +20,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/api/v1", require("./routes/api/index.v1"));
+app.use("/", require("./routes"));
 
 app.use(function(req, res, next) {
 	next(httpErrors(404));
