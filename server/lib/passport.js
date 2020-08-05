@@ -29,7 +29,7 @@ exports.authenticateManagementCredentials = function (req, res, next) {
 			return next(error);
 		}
 		if (!user) {
-			next(httpErrors(401, info));
+			return next(httpErrors(401, info));
 		}
 		const { id, type, username } = user;
 
