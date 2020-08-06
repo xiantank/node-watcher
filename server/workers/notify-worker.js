@@ -13,7 +13,6 @@ async function start() {
 		} = job.data;
 
 		try {
-			console.log(job.data);
 			const notification = await getByUserId(user_id);
 
 			await im.get(notification.im_type).send(result, {

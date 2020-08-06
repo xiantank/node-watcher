@@ -44,10 +44,26 @@ async function updateIntervalTypeByIdAndUserId(id, user_id, interval_type) {
 	return true;
 }
 
+async function deleteByIdAndUserId(id, user_id) {
+	const ok = await model.destroy({
+		where: {
+			id,
+			user_id,
+		},
+	});
+
+	if (ok === 0) {
+		return false;
+	}
+
+	return true;
+}
+
 module.exports = {
 	create,
 	getWithinIntervalTypes,
 	getAllByUserId,
 	getByIdAndUserId,
 	updateIntervalTypeByIdAndUserId,
+	deleteByIdAndUserId,
 };

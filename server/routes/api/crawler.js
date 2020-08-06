@@ -92,4 +92,25 @@ router.patch("/:id",
 		}
 	});
 
+router.delete("/:id",
+	[
+		common.checkIdInParam,
+		validateResult,
+	],
+	async (req, res, next) => {
+		try {
+			const { id } = req.params;
+			const { id: userId } = req.user;
+			const ok = await Crawler.deleteByIdAndUserId(id, userId);
+
+			if (!ok) {
+				return next(httpErrors(404));
+			}
+
+			res.status(204).end();
+		} catch (error) {
+			next(httpErrors(500, error.message));
+		}
+	});
+
 module.exports = router;
