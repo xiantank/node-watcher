@@ -12,7 +12,7 @@ const schema = {
 		},
 	},
 	im_type: {
-		type: Sequelize.STRING,
+		type: Sequelize.INTEGER,
 		allowNull: false,
 		defaultValue: IM_TYPE.TELEGRAM,
 	},
