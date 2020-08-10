@@ -53,7 +53,7 @@ router.put("/",
 				token,
 				options,
 			} = req.body;
-			const notification = await Notification.upsert({
+			const [notification, isNew] = await Notification.upsert({
 				im_type,
 				token,
 				options,
