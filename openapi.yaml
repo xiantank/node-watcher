@@ -1,0 +1,286 @@
+openapi: 3.0.3
+info:
+  title: Watcher
+  description: watch speicify page.css and send notifications
+  version: 0.0.1
+servers:
+  - url: https://watcher.xiantank.xyz/api/v1
+    description: server for demo
+  - url: http://localhost:3000/api/v1
+    description: run local
+tags:
+  - name: user
+    description: Access users
+  - name: auth
+    description: login/logout
+# TODO: add examples
+# TODO: add minimum integer
+# TODO: add links
+# TODO: crawler.delete, crawler.patch, notification.get, notification.gets
+paths:
+  /login:
+    post:
+      tags:
+        - auth
+      requestBody:
+        required: true
+        description: A JSON object containing the login and password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: login success
+      security: []
+  /logout:
+    post:
+      tags:
+        - auth
+      responses:
+        '201':
+          description: login success
+      security: []
+  /users:
+    get:
+      tags:
+        - user
+      description: get list of users
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+          description: success
+    post:
+      tags:
+        - user
+      summary: create user
+      description: ""
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '201':
+          description: create success
+        '409':
+          description: username exists
+        '422':
+          description: format error
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      description: get list of users
+      parameters:
+        - name: 'userId'
+          required: true
+          description: the user identifier, as userId
+          in: path
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: success
+        '404':
+          description: not found
+    patch:
+      tags:
+        - user
+      description: update user info(password only now)
+      parameters:
+        - name: 'userId'
+          required: true
+          description: the user identifier, as userId
+          in: path
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  description: origin password
+                password:
+                  type: string
+                  description: new password
+      responses:
+        '204':
+          description: update password success
+        '401':
+          description: oldPassword invalid
+  /crawlers:
+    get:
+      tags:
+        - crawler
+      description: crawlers...
+      responses:
+        '200':
+          description: success get list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Crawler"
+    post:
+      tags:
+        - crawler
+      description: "create user"
+      requestBody:
+        $ref: '#/components/requestBodies/Crawler'
+      responses:
+        '201':
+          description: create success
+        '409':
+          description: username exists
+        '422':
+          description: format error
+  /crawlers/{crawlerId}:
+    get:
+      tags:
+        - crawler
+      description: crawlers...
+      parameters:
+        - name: 'crawlerId'
+          required: true
+          description: the crawler identifier, as crawlerId
+          in: path
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success get list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Crawler"
+  /notifications:
+    put:
+      tags:
+        - notification
+      description: "upsert notification"
+      requestBody:
+        $ref: '#/components/requestBodies/Notification'
+      responses:
+        '201':
+          description: create success
+        '422':
+          description: format error
+# TODO: add enum for integer enum
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+  parameters:
+    offsetParam:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+      description: The number of items to skip before returning the results
+    limitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: The number of items to return
+  requestBodies:
+    User:
+      description: a JSON object containing user data
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+              type:
+                type: integer
+    Notification:
+      description: a JSON object containing notification data
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Notification"
+    Crawler:
+      description: a JSON object containing user data
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Crawler"
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        type:
+          type: integer
+    Crawler:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        interval_type:
+          type: integer
+        url:
+          type: string
+        parser:
+          type: string
+        parse_attributes:
+          type: integer
+        target:
+          type: string
+          nullable: true
+        compare_type:
+          type: integer
+          enum: [1,2]
+        user_id:
+          type: integer
+    Notification:
+      type: object
+      properties:
+        im_type:
+          type: integer
+        token:
+          type: string
+        options:
+          type: object
+security:
+  - cookieAuth: []
