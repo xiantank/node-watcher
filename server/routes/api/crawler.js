@@ -46,11 +46,11 @@ router.post("/",
 	],
 	async (req, res, next) => {
 		try {
+			const { id: user_id } = req.user;
 			const {
 				name, interval_type, url,
 				parser, parse_attributes,
 				target, compare_type,
-				user_id,
 			} = req.body;
 			const crawler = await Crawler.create({
 				name, interval_type, url,

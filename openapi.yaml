@@ -271,8 +271,6 @@ components:
         compare_type:
           type: integer
           enum: [1,2]
-        user_id:
-          type: integer
     Notification:
       type: object
       properties:
