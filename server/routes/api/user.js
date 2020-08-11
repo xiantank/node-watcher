@@ -7,11 +7,8 @@ const checkUserRole = require("../../middlewares/checkUserRole");
 const { USER_TYPE } = require("../../enum");
 const User = require("../../stores/user");
 
-router.get("/me", (req, res) => {
-	res.json(req.user);
-});
-
 router.get("/",
+	checkUserRole([USER_TYPE.ADMIN]),
 	[
 		common.checkPage,
 		common.checkLimit,
@@ -29,6 +26,7 @@ router.get("/",
 	});
 
 router.get("/:id",
+	checkUserRole([USER_TYPE.ADMIN]),
 	[
 		common.checkIdInParam,
 		validateResult,
@@ -80,7 +78,16 @@ router.patch("/:id",
 		common.checkIdInParam,
 		validateResult,
 	],
-	// TODO: check is self.id or isAdmin
+	(req, res, next) => {
+		const { id: userId } = req.user;
+		const { id } = req.params;
+
+		if (id == userId) {
+			return next();
+		}
+
+		return next(httpErrors(403));
+	},
 	async (req, res, next) => {
 		try {
 			const { id } = req.params;
